@@ -6,12 +6,16 @@
 /*   By: slayer <slayer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/17 23:27:50 by slayer           ###   ########.fr       */
+/*   Updated: 2025/11/19 21:15:13 by slayer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+# define WAIT_TIME 700
 
 int	ft_strlen(const char *c)
 {
@@ -25,33 +29,28 @@ int	ft_strlen(const char *c)
 	return (len);
 }
 
-static void	copy_str(char *dst, const char *src)
+/* static void	ft_signal(int sig)
 {
-	while (*src)
-		*dst++ = *src++;
-	*dst = '\0';
-}
+	static int	bit;
+	static int	byte;
 
-static void	build_proc_path(char *buf, char *pid)
-{
-	copy_str(buf, "/proc/");
-	copy_str(buf + 6, pid);
-	copy_str(buf + 6 + ft_strlen(pid), "/fd/0");
-}
+	(void)sig;
+	if (sig == SIGUSR2)
+	{
+		bit++;
+		if (bit == 8)
+		{
+			byte++;
+			bit = 0;
+		}
+	}
+	else if (sig == SIGUSR1)
+	{
+		printf("\nBytes received with success: %d\n", byte + 1);
+		exit(0);
+	}
+} */
 
-static int	open_proc_fd(char *pid)
-{
-	char	path[64];
-
-	build_proc_path(path, pid);
-	return (open(path, O_WRONLY));
-}
-
-static void	send_string(int fd, char *str)
-{
-	write(fd, str, ft_strlen(str));
-	write(fd, "\n", 1);
-}
 static int	pid_parser(char *argv)
 {
 	int	i;
@@ -65,6 +64,7 @@ static int	pid_parser(char *argv)
 	}
 	return (0);
 }
+
 static int	string_parser(char *argv)
 {
 	int	i;
@@ -78,21 +78,59 @@ static int	string_parser(char *argv)
 	}
 	return (0);
 }
-int	main(int argc, char **argv)
-{
-	int	fd;
 
-	if (argc != 3)
-		return (write(2, "Usage: ./client <pid> <string>\n", 32), 1);
-	if (pid_parser(argv[1]))
-		return (write(2, "<pid> must be all numerical and positive\n", 42), 1);
-	fd = open_proc_fd(argv[1]);
-	if (fd < 0)
-		return (write(2, "file opening fail\n", 19), 1);
-	if (string_parser(argv[2]))
-		return (write(2, "<string> all caracters must be printable\n", 42), 1);
-	send_string(fd, argv[2]);
-	close(fd);
-	return (0);
+static void	ft_s_strlen_bit_bit(int len, int pid)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 32)
+	{
+		if (len & 0x01)
+			kill(pid, SIGUSR2);
+		else
+			kill(pid, SIGUSR1);
+		len = len >> 1;
+		usleep(WAIT_TIME);
+	}
 }
 
+static void	send_nextchar_bit_bit(unsigned char len, int pid)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 8)
+	{
+		if (len & 0x01)
+			kill(pid, SIGUSR2);
+		else
+			kill(pid, SIGUSR1);
+		len = len >> 1;
+		usleep(WAIT_TIME);
+	}
+}
+
+int	main(int argc, char **argv)
+{
+	int	pid;
+	int	len;
+	int	i;
+	char *str;
+
+	if (argc != 3)
+		return (write(2, "Usage: ./client <pid> <string>\n", 32), -1);
+	if (pid_parser(argv[1]))
+		return (write(2, "<pid> must be all numerical and positive\n", 42), -1);
+	if (string_parser(argv[2]))
+		return (write(2, "<string> all caracters must be printable\n", 42), -1);
+	len = ft_strlen(argv[2]);
+	pid = atoi(argv[1]);
+	ft_s_strlen_bit_bit(len, pid);
+	str = argv[2];
+	i = -1;
+	while (str[++i])
+		send_nextchar_bit_bit(str[++i], pid);
+	send_nextchar_bit_bit(str[++i], pid);
+	return (0);
+}
