@@ -6,7 +6,7 @@
 /*   By: slayer <slayer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/19 21:15:13 by slayer           ###   ########.fr       */
+/*   Updated: 2025/11/19 23:12:51 by slayer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ static void	ft_s_strlen_bit_bit(int len, int pid)
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
-		usleep(WAIT_TIME);
 	}
 }
 
@@ -107,7 +106,6 @@ static void	send_nextchar_bit_bit(unsigned char len, int pid)
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
-		usleep(WAIT_TIME);
 	}
 }
 
@@ -126,7 +124,7 @@ int	main(int argc, char **argv)
 		return (write(2, "<string> all caracters must be printable\n", 42), -1);
 	len = ft_strlen(argv[2]);
 	pid = atoi(argv[1]);
-	ft_s_strlen_bit_bit(len, pid);
+	ft_s_strlen_bit_bit((len), pid);
 	str = argv[2];
 	i = -1;
 	while (str[++i])
