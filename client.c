@@ -6,7 +6,7 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/20 18:46:28 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/20 20:18:22 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ static void	ft_s_strlen_bit_bit(int len, int pid)
 			kill(pid, SIGUSR1);
 		len = len >> 1;
 		i++;
+		usleep(WAIT_TIME);
 	}
 }
 
@@ -98,6 +99,7 @@ static void	send_nextchar_bit_bit(unsigned char len, int pid)
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
+		usleep(WAIT_TIME);
 	}
 }
 
@@ -118,9 +120,12 @@ int	main(int argc, char **argv)
 	pid = atoi(argv[1]);
 	ft_s_strlen_bit_bit((len), pid);
 	str = argv[2];
-	i = -1;
-	while (str[++i])
-		send_nextchar_bit_bit(str[++i], pid);
-	send_nextchar_bit_bit(str[++i], pid);
+	i = 0;
+	while (str[i])
+	{
+		send_nextchar_bit_bit(str[i], pid);
+		i++;
+	}
+	printf("%d\n", i - 1);
 	return (0);
 }

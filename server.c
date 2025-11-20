@@ -6,16 +6,11 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:12:55 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/20 18:44:44 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/20 20:21:03 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-# define WAIT_TIME 700
+#include "minitalk.h"
 
 void    disp(int sig)
 {
@@ -26,37 +21,14 @@ void    disp(int sig)
         tracker = 0;
         printf("|");
     }
-    usleep(100000);
 }
-
-int	ft_recur_power(int nb, int power)
-{
-	if (power < 0)
-		return (0);
-	else if (power == 0 && nb != 0)
-		return (1);
-	else
-		return (nb * ft_recur_power(nb, power - 1));
-}
-
-/* static void	ft_restart_var(int *len_rec, char **str, int *s)
-{
-	*len_rec = 0;
-	if (str)
-	{
-		printf("%s\n", *str);
-		free(*str);
-		*str = 0;
-	}
-	*s = 0;
-} */
 
 static void	str_len(int *curr_bit_len, int *len, int sig)
 {
 	if (sig == SIGUSR2)
 	{
 		disp(1);
-		*len = *len | 1;
+		*len |= (1 << *curr_bit_len);
 	}
 	else
 		disp(0);
@@ -66,18 +38,51 @@ static void	str_len(int *curr_bit_len, int *len, int sig)
 		(printf("\nbit_len= %d\n",*len));
 		return ;
 	}
-	*len = *len << 1;
+}
+
+static void	char_init(int *curr_bit_char, int *pos, int sig, char *str)
+{
+	if (sig == SIGUSR2)
+	{
+		disp(1);
+		str[*pos] |= (1 << *curr_bit_char);
+	}
+	else
+		disp(0);
+	(*curr_bit_char)++;
+	if (*curr_bit_char >= 8)
+	{
+		(printf("\n%d: char= %c\n",*pos, str[*pos]));
+		(*pos)++;
+		*curr_bit_char = 0;
+	}
+}
+
+static void	restart_vars(t_Message *message)
+{
+	if (message->str)
+	{
+		printf("%s\n", message->str);
+		free(message->str);
+	}
+	message->curr_bit_len = 0;
+	message->curr_bit_char = 0;
+	message->len = 0;
+	message->pos = 0;
+	message->str = 0;
 }
 
 static void	ft_signal(int sig)
 {
-	static int	curr_bit_len;
-	static int	len;
+	static t_Message message;
 
-	if(curr_bit_len < 32)
-		return (str_len(&curr_bit_len, &len, sig));
-	
-	
+	if(message.curr_bit_len < 32)
+		return (str_len(&message.curr_bit_len, &message.len, sig));
+	if(!message.str)
+		message.str = calloc(sizeof(char), message.len + 1);
+	char_init(&message.curr_bit_char, &message.pos, sig, message.str);
+	if (message.pos >= message.len)
+		restart_vars(&message);
 }
 
 int	main(void)
