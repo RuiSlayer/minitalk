@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: slayer <slayer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/19 23:12:51 by slayer           ###   ########.fr       */
+/*   Updated: 2025/11/20 18:46:28 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,27 +29,17 @@ int	ft_strlen(const char *c)
 	return (len);
 }
 
-/* static void	ft_signal(int sig)
+void    disp(int sig)
 {
-	static int	bit;
-	static int	byte;
-
-	(void)sig;
-	if (sig == SIGUSR2)
-	{
-		bit++;
-		if (bit == 8)
-		{
-			byte++;
-			bit = 0;
-		}
-	}
-	else if (sig == SIGUSR1)
-	{
-		printf("\nBytes received with success: %d\n", byte + 1);
-		exit(0);
-	}
-} */
+    static char tracker;
+    printf("%d", (sig));
+    if (tracker++ / 7)
+    {
+        tracker = 0;
+        printf("|");
+    }
+    usleep(100000);
+}
 
 static int	pid_parser(char *argv)
 {
@@ -83,14 +73,16 @@ static void	ft_s_strlen_bit_bit(int len, int pid)
 {
 	int	i;
 
-	i = -1;
-	while (++i < 32)
+	i = 0;
+	while (i < 32)
 	{
+		disp(len & 0x01);
 		if (len & 0x01)
 			kill(pid, SIGUSR2);
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
+		i++;
 	}
 }
 
