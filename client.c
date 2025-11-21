@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
+/*   By: slayer <slayer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/21 03:33:37 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 23:02:55 by slayer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	main(int argc, char **argv)
 		return (write(2, "<pid> must be all numerical and positive\n", 42), -1);
 	pid = ft_atoi(argv[1]);
 	if (kill(pid, 0) == -1)
-		return (write(2, "no process whith that <pid>\n", 42), -1);
+		return (write(2, "no process whith that <pid>\n", 29), -1);
 	len = ft_strlen(argv[2]);
 	signal(SIGUSR1, &ft_signal);
 	signal(SIGUSR2, &ft_signal);
