@@ -6,16 +6,13 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/20 20:18:22 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 02:42:07 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-# define WAIT_TIME 700
+#include "minitalk.h"
+
+volatile	sig_atomic_t g_ack = 0;
 
 int	ft_strlen(const char *c)
 {
@@ -27,18 +24,6 @@ int	ft_strlen(const char *c)
 		len++;
 	}
 	return (len);
-}
-
-void    disp(int sig)
-{
-    static char tracker;
-    printf("%d", (sig));
-    if (tracker++ / 7)
-    {
-        tracker = 0;
-        printf("|");
-    }
-    usleep(100000);
 }
 
 static int	pid_parser(char *argv)
@@ -55,20 +40,6 @@ static int	pid_parser(char *argv)
 	return (0);
 }
 
-static int	string_parser(char *argv)
-{
-	int	i;
-
-	i = 0;
-	while (argv[i])
-	{
-		if (!(argv[i] >= 32 && argv[i] <= 126))
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 static void	ft_s_strlen_bit_bit(int len, int pid)
 {
 	int	i;
@@ -76,14 +47,15 @@ static void	ft_s_strlen_bit_bit(int len, int pid)
 	i = 0;
 	while (i < 32)
 	{
-		disp(len & 0x01);
+		g_ack = 0;
 		if (len & 0x01)
 			kill(pid, SIGUSR2);
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
 		i++;
-		usleep(WAIT_TIME);
+		while(g_ack == 0)
+			sleep(1);
 	}
 }
 
@@ -94,12 +66,25 @@ static void	send_nextchar_bit_bit(unsigned char len, int pid)
 	i = -1;
 	while (++i < 8)
 	{
+		g_ack = 0;
 		if (len & 0x01)
 			kill(pid, SIGUSR2);
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
-		usleep(WAIT_TIME);
+		while(g_ack == 0)
+			sleep(1);
+	}
+}
+
+static void	ft_signal(int sig)
+{
+	if (sig == SIGUSR1)
+		g_ack = 1;
+	else if (sig == SIGUSR2)
+	{
+		write(1,"the message was receved!",25);
+		exit(0);
 	}
 }
 
@@ -114,10 +99,10 @@ int	main(int argc, char **argv)
 		return (write(2, "Usage: ./client <pid> <string>\n", 32), -1);
 	if (pid_parser(argv[1]))
 		return (write(2, "<pid> must be all numerical and positive\n", 42), -1);
-	if (string_parser(argv[2]))
-		return (write(2, "<string> all caracters must be printable\n", 42), -1);
 	len = ft_strlen(argv[2]);
 	pid = atoi(argv[1]);
+	signal(SIGUSR1, &ft_signal);
+	signal(SIGUSR2, &ft_signal);
 	ft_s_strlen_bit_bit((len), pid);
 	str = argv[2];
 	i = 0;
@@ -126,6 +111,5 @@ int	main(int argc, char **argv)
 		send_nextchar_bit_bit(str[i], pid);
 		i++;
 	}
-	printf("%d\n", i - 1);
 	return (0);
 }

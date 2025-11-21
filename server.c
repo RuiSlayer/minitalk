@@ -6,59 +6,34 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:12:55 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/20 20:21:03 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 02:31:18 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void    disp(int sig)
-{
-    static char tracker;
-    printf("%d", (sig));
-    if (tracker++ / 7)
-    {
-        tracker = 0;
-        printf("|");
-    }
-}
-
-static void	str_len(int *curr_bit_len, int *len, int sig)
+static void	str_len(int *curr_bit_len, int *len, int sig, int client_pid)
 {
 	if (sig == SIGUSR2)
-	{
-		disp(1);
 		*len |= (1 << *curr_bit_len);
-	}
-	else
-		disp(0);
 	(*curr_bit_len)++;
-	if (*curr_bit_len == 32)
-	{
-		(printf("\nbit_len= %d\n",*len));
-		return ;
-	}
+	kill(client_pid, SIGUSR1);
 }
 
-static void	char_init(int *curr_bit_char, int *pos, int sig, char *str)
+static void	char_init(int *curr_bit_char, int *pos, int sig, char *str, int client_pid)
 {
 	if (sig == SIGUSR2)
-	{
-		disp(1);
 		str[*pos] |= (1 << *curr_bit_char);
-	}
-	else
-		disp(0);
 	(*curr_bit_char)++;
 	if (*curr_bit_char >= 8)
 	{
-		(printf("\n%d: char= %c\n",*pos, str[*pos]));
 		(*pos)++;
 		*curr_bit_char = 0;
 	}
+	kill(client_pid, SIGUSR1);
 }
 
-static void	restart_vars(t_Message *message)
+static void	restart_vars(t_Message *message, int client_pid)
 {
 	if (message->str)
 	{
@@ -70,26 +45,33 @@ static void	restart_vars(t_Message *message)
 	message->len = 0;
 	message->pos = 0;
 	message->str = 0;
+	kill(client_pid, SIGUSR2);
 }
 
-static void	ft_signal(int sig)
+static void	ft_signal(int sig, siginfo_t *info, void *context)
 {
 	static t_Message message;
 
+	(void)context;
 	if(message.curr_bit_len < 32)
-		return (str_len(&message.curr_bit_len, &message.len, sig));
+		return (str_len(&message.curr_bit_len, &message.len, sig, info->si_pid));
 	if(!message.str)
 		message.str = calloc(sizeof(char), message.len + 1);
-	char_init(&message.curr_bit_char, &message.pos, sig, message.str);
+	char_init(&message.curr_bit_char, &message.pos, sig, message.str, info->si_pid);
 	if (message.pos >= message.len)
-		restart_vars(&message);
+		restart_vars(&message, info->si_pid);
 }
 
 int	main(void)
 {
+	struct sigaction	sa;
+
 	printf("PID=%d\n", getpid());
-	signal(SIGUSR1, &ft_signal);
-	signal(SIGUSR2, &ft_signal);
+	sa.sa_sigaction = ft_signal;
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
 		usleep(WAIT_TIME);
 	return (0);
