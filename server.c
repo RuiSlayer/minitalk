@@ -6,7 +6,7 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:12:55 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/21 03:21:52 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 03:39:40 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ static void	restart_vars(t_Message *message, int client_pid)
 {
 	if (message->str)
 	{
-		ft_printf("%s\n", message->str);
+		ft_putstr_fd(message->str, 1);
+		ft_putstr_fd("\n", 1);
 		free(message->str);
 	}
 	message->curr_bit_len = 0;
@@ -67,7 +68,9 @@ int	main(void)
 {
 	struct sigaction	sa;
 
-	ft_printf("PID=%d\n", getpid());
+	ft_putstr_fd("PID=", 1);
+	ft_putnbr_fd(getpid(), 1);
+	ft_putstr_fd("\n", 1);
 	sa.sa_sigaction = ft_signal;
 	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);

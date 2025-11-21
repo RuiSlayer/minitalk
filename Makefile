@@ -7,17 +7,14 @@ SRCS_c = client.c
 OBJS = $(SRCS:.c=.o)
 OBJS_c = $(SRCS_c:.c=.o)
 
-all: printf $(NAME) $(NAME_c)
+all: libft $(NAME) $(NAME_c)
 
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -I. ft_printf/libftprintf.a 42libft/libft.a -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -I. 42libft/libft.a -o $(NAME)
 
 $(NAME_c): $(OBJS_c)
-	$(CC) $(CFLAGS) $(OBJS_c) -I. ft_printf/libftprintf.a 42libft/libft.a -o $(NAME_c)
-
-printf: libft
-	$(MAKE) -C ft_printf
+	$(CC) $(CFLAGS) $(OBJS_c) -I. 42libft/libft.a -o $(NAME_c)
 
 libft:
 	$(MAKE) -C 42libft
@@ -25,12 +22,9 @@ libft:
 %.o: %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-
-
 clean:
 	rm -f $(OBJS)
 	rm -f $(OBJS_c)
-	$(MAKE) -C ft_printf fclean
 	$(MAKE) -C 42libft fclean
 
 fclean: clean

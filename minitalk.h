@@ -6,7 +6,7 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 03:41:02 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <signal.h>
 #include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
 
 #define WAIT_TIME 700
 
