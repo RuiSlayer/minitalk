@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/21 18:16:18 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/29 15:25:08 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
-
-#define WAIT_TIME 700
-
-typedef struct Message
+void	ft_striteri(char *s, void (*f)(unsigned int, char*))
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	unsigned int	i;
+
+	i = 0;
+	if (!s || !f)
+		return ;
+	while (s[i] != '\0')
+	{
+		f(i, &s[i]);
+		i++;
+	}
+}

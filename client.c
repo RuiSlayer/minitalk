@@ -6,25 +6,13 @@
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:06:07 by slayer            #+#    #+#             */
-/*   Updated: 2025/11/21 02:42:07 by rucosta          ###   ########.fr       */
+/*   Updated: 2025/11/21 03:20:51 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-volatile	sig_atomic_t g_ack = 0;
-
-int	ft_strlen(const char *c)
-{
-	int	len;
-
-	len = 0;
-	while (c[len] != '\0')
-	{
-		len++;
-	}
-	return (len);
-}
+volatile sig_atomic_t	g_ack = 0;
 
 static int	pid_parser(char *argv)
 {
@@ -54,7 +42,7 @@ static void	ft_s_strlen_bit_bit(int len, int pid)
 			kill(pid, SIGUSR1);
 		len = len >> 1;
 		i++;
-		while(g_ack == 0)
+		while (g_ack == 0)
 			sleep(1);
 	}
 }
@@ -72,7 +60,7 @@ static void	send_nextchar_bit_bit(unsigned char len, int pid)
 		else
 			kill(pid, SIGUSR1);
 		len = len >> 1;
-		while(g_ack == 0)
+		while (g_ack == 0)
 			sleep(1);
 	}
 }
@@ -83,24 +71,24 @@ static void	ft_signal(int sig)
 		g_ack = 1;
 	else if (sig == SIGUSR2)
 	{
-		write(1,"the message was receved!",25);
+		write (1, "the message was receved!", 25);
 		exit(0);
 	}
 }
 
 int	main(int argc, char **argv)
 {
-	int	pid;
-	int	len;
-	int	i;
-	char *str;
+	int		pid;
+	int		len;
+	int		i;
+	char	*str;
 
 	if (argc != 3)
 		return (write(2, "Usage: ./client <pid> <string>\n", 32), -1);
 	if (pid_parser(argv[1]))
 		return (write(2, "<pid> must be all numerical and positive\n", 42), -1);
 	len = ft_strlen(argv[2]);
-	pid = atoi(argv[1]);
+	pid = ft_atoi(argv[1]);
 	signal(SIGUSR1, &ft_signal);
 	signal(SIGUSR2, &ft_signal);
 	ft_s_strlen_bit_bit((len), pid);

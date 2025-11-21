@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/07 18:48:46 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/22 01:33:28 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
+#include "libft.h"
 
-#define WAIT_TIME 700
-
-typedef struct Message
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	size_t	i;
+	size_t	len;
+
+	i = 0;
+	len = ft_strlen(src);
+	if (size > 0)
+	{
+		while (i < size - 1 && src[i] != '\0')
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+	}
+	return (len);
+}

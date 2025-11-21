@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_isalnum.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/21 21:00:32 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/21 21:07:29 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
+#include "libft.h"
 
-#define WAIT_TIME 700
-
-typedef struct Message
+int	ft_isalnum(int c)
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	if (ft_isalpha(c) || ft_isdigit(c))
+		return (1);
+	return (0);
+}

@@ -1,28 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/07 18:49:17 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/07 18:49:20 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
+#include <string.h>
+#include <stdio.h>
 
-#define WAIT_TIME 700
-
-typedef struct Message
+char	*ft_strrchr(const char *s, int c)
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	char	*last_occurrence;
+
+	last_occurrence = NULL;
+	while (*s)
+	{
+		if (*s == (char)c)
+		{
+			last_occurrence = (char *)s;
+		}
+		s++;
+	}
+	if (c == '\0')
+	{
+		return ((char *)s);
+	}
+	return (last_occurrence);
+}

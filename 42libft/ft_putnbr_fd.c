@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/21 19:36:36 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/21 19:41:29 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
+#include "libft.h"
 
-#define WAIT_TIME 700
-
-typedef struct Message
+void	ft_putnbr_fd(int n, int fd)
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	char	*ptr;
+
+	ptr = ft_itoa(n);
+	ft_putstr_fd(ptr, fd);
+	free(ptr);
+}

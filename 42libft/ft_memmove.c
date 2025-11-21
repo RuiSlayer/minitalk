@@ -1,28 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rucosta <rucosta@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 19:41:07 by rucosta           #+#    #+#             */
-/*   Updated: 2025/11/21 03:20:00 by rucosta          ###   ########.fr       */
+/*   Created: 2025/04/07 18:48:02 by rucosta           #+#    #+#             */
+/*   Updated: 2025/04/29 15:16:01 by rucosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include "42libft/libft.h"
-#include "ft_printf/ft_printf.h"
+#include <string.h>
+#include <stdio.h>
 
-#define WAIT_TIME 700
-
-typedef struct Message
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	int		curr_bit_len;
-	int		curr_bit_char;
-	int		len;
-	int		pos;
-	char	*str;
-}	t_Message;
+	unsigned char		*d;
+	const unsigned char	*s;
+
+	d = dest;
+	s = src;
+	if (d < s || d >= s + n)
+	{
+		while (n--)
+		{
+			*d++ = *s++;
+		}
+	}
+	else
+	{
+		d += n;
+		s += n;
+		while (n--)
+		{
+			*(--d) = *(--s);
+		}
+	}
+	return (dest);
+}
